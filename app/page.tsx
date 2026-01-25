@@ -43,6 +43,9 @@ export default async function HomePage() {
                 <Link href="/sign-in">Sign in</Link>
               </Button>
             )}
+            <Link href="/settings" className="text-sm text-muted-foreground hover:text-foreground">
+              Settings
+            </Link>
             <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
               Privacy
             </Link>
