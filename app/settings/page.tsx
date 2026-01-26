@@ -36,6 +36,14 @@ export default async function SettingsPage() {
   const weeklyBriefEmail = settings?.weekly_brief_email ?? user.email ?? "";
   const timezone = settings?.timezone ?? DEFAULT_TIMEZONE;
 
+  const { data: subscription } = await supabaseAdmin
+    .from("subscriptions")
+    .select("status")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const isSubscribed = subscription?.status === "active" || subscription?.status === "trialing";
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
@@ -49,11 +57,22 @@ export default async function SettingsPage() {
         </div>
       </header>
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <div className="flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center justify-center p-4 gap-8">
           <SettingsForm
             weeklyBriefEmail={weeklyBriefEmail}
             timezone={timezone}
           />
+          {!isSubscribed && (
+            <section className="w-full max-w-sm rounded-lg border bg-card p-4">
+              <h2 className="font-semibold mb-2">Subscription</h2>
+              <p className="text-muted-foreground text-sm mb-4">
+                Subscribe to get your weekly decision brief by email.
+              </p>
+              <form action="/api/stripe/checkout-session" method="POST">
+                <Button type="submit">Subscribe</Button>
+              </form>
+            </section>
+          )}
         </div>
       </main>
     </div>

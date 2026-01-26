@@ -20,6 +20,20 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+### Stripe webhooks (local development)
+
+Stripe cannot call `localhost`, so locally you forward events with the [Stripe CLI](https://stripe.com/docs/stripe-cli):
+
+1. **Install the Stripe CLI** (macOS): `brew install stripe/stripe-cli/stripe`. Then log in: `stripe login`.
+2. In one terminal, run: `bun run stripe:listen`. Leave it running.
+3. The CLI will print a **webhook signing secret** (`whsec_...`). Add it to `.env.local`:
+   ```
+   STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxx
+   ```
+4. Restart your Next app (`bun dev`) so it picks up the new env var. After that, completed checkouts (and subscription events) will be forwarded to your local `/api/stripe/webhook`.
+
+Your existing Stripe keys in `.env.local` (from the Dashboard: Developers → API keys and Product catalog) are enough; the only extra value for local webhook testing is `STRIPE_WEBHOOK_SECRET` from the CLI in step 3.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
